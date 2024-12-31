@@ -51,6 +51,16 @@ return require('packer').startup(function(use)
 			{'rafamadriz/friendly-snippets'}
 		},
 	}
+	use {
+		"github/copilot.vim"
+	}
+use({
+    "kdheepak/lazygit.nvim",
+    -- optional for floating window border decoration
+    requires = {
+        "nvim-lua/plenary.nvim",
+    },
+})
     use {
         "windwp/nvim-autopairs",
         event = "InsertEnter",

@@ -17,18 +17,18 @@ help()
 check_ver() {
 	#echo "no" | dpkg-reconfigure dash
 	if [ $SUPPORTED_OS_VERSIONS == "22.04" ]; then
-		nodejs_ver=v18.20.0
-		neovim_ver=0.10.2
+		nodejs_ver=v22.12.0
+		neovim_ver=0.10.3
 		apt_package="gcc g++ curl wget git ripgrep build-essential make cmake python3.10 libpython3-dev python3-distutils python3-pip clang clang-tidy universal-ctags bear libtool-bin automake autoconf bison gperf flex texinfo libncurses5 libncurses5-dev ninja-build gettext unzip pkg-config rename software-properties-common npm xclip"
 		apt_arr=($apt_package)
 	elif [ $SUPPORTED_OS_VERSIONS == "20.04" ]; then
-		nodejs_ver=v18.20.0
-		neovim_ver=0.10.2
+		nodejs_ver=v20.18.1
+		neovim_ver=0.10.3
 		apt_package="gcc g++ curl wget git ripgrep build-essential make cmake python3.8 libpython3-dev python3-distutils python3-pip clang clang-tidy universal-ctags bear libtool-bin automake autoconf bison gperf flex texinfo libncurses5 libncurses5-dev ninja-build gettext unzip pkg-config rename software-properties-common npm xclip"
 		apt_arr=($apt_package)
 	elif [ $SUPPORTED_OS_VERSIONS == "18.04" ]; then
-		nodejs_ver=v16.18.1
-		neovim_ver=0.10.2
+		nodejs_ver=v18.20.5
+		neovim_ver=0.10.3
 		apt_package="gcc g++ curl wget git build-essential make cmake python3.6 libpython3-dev python3-distutils python3-pip clang clang-tidy ctags bear libtool-bin automake autoconf bison gperf flex texinfo libncurses5 libncurses5-dev ninja-build gettext unzip pkg-config rename software-properties-common npm xclip"
 		apt_arr=($apt_package)
 	else 

@@ -150,6 +150,7 @@ require("tokyonight").setup({
   on_highlights = function(highlights, colors)
 	highlights.LineNr ={fg="#EDF0A1"}
     highlights.Comment ={fg="#727169"}
+	highlights.CopilotSuggestion ={fg="#EFE8B2"}
 	end,
 })
 

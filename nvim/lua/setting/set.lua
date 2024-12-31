@@ -39,3 +39,5 @@ vim.opt.autoread = true
 vim.cmd [[autocmd CursorHold * checktime]]
 
 vim.o.clipboard = "unnamedplus"
+-- Add keymap for open lazygit
+vim.keymap.set("n", "<leader>lg", "<cmd>LazyGit<CR>", { silent = true })
