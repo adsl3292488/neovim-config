@@ -109,10 +109,15 @@ _G.packer_plugins = {
     path = "/home/hwy/.local/share/nvim/site/pack/packer/start/cmp_luasnip",
     url = "https://github.com/saadparwaiz1/cmp_luasnip"
   },
-  ["copilot.vim"] = {
+  ["copilot-lualine"] = {
     loaded = true,
-    path = "/home/hwy/.local/share/nvim/site/pack/packer/start/copilot.vim",
-    url = "https://github.com/github/copilot.vim"
+    path = "/home/hwy/.local/share/nvim/site/pack/packer/start/copilot-lualine",
+    url = "https://github.com/AndreM222/copilot-lualine"
+  },
+  ["copilot.lua"] = {
+    loaded = true,
+    path = "/home/hwy/.local/share/nvim/site/pack/packer/start/copilot.lua",
+    url = "https://github.com/zbirenbaum/copilot.lua"
   },
   ["dressing.nvim"] = {
     loaded = true,

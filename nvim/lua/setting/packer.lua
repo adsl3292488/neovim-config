@@ -51,8 +51,12 @@ return require('packer').startup(function(use)
 			{'rafamadriz/friendly-snippets'}
 		},
 	}
+	 use {
+	-- 	"github/copilot.vim"	
+	 	"zbirenbaum/copilot.lua"
+	 }
 	use {
-		"github/copilot.vim"
+		"AndreM222/copilot-lualine",
 	}
 use({
     "kdheepak/lazygit.nvim",
