@@ -1,0 +1,44 @@
+# 使用基於 LLVM 的格式風格
+BasedOnStyle: LLVM
+
+# 設定縮進為 4 個空格
+IndentWidth: 4
+
+# 設定 Tab 寬度為 4 個空格
+TabWidth: 4
+
+# 使用空格而不是 Tab
+UseTab: Never
+
+# 每行最多 100 個字符
+ColumnLimit: 100
+
+# 函數定義後的左大括號位於同一行
+BreakBeforeBraces: Attach
+
+# 強制類成員變量按訪問修飾符分組
+SortIncludes: true
+
+# 強制在控制結構 (如 if, for, while) 的左括號前加一個空格
+SpaceBeforeParens: ControlStatements
+
+# 設置函數宣告和函數定義的返回類型與函數名之間的間距
+SpaceAfterLogicalNot: true
+
+# 控制多行注釋的格式
+CommentPragmas: '^ IWYU pragma:'
+
+# 允許函數參數列表中多行對齊
+AlignAfterOpenBracket: AlwaysBreak
+
+# 強制指針和引用符號與變量名對齊
+PointerAlignment: Right
+
+# 在逗號後強制添加空格
+SpacesInAngles: false
+
+# 強制為運算符兩邊添加空格
+SpacesInContainerLiterals: true
+
+# 使用 C++11 列表初始化格式
+# Cpp11BracedListStyle: true

@@ -2,10 +2,10 @@ vim.opt.guicursor = ""
 vim.opt.cursorline = true
 
 vim.opt.tabstop = 4
-vim.opt.softtabstop = 0
+vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.backspace = "2"
---vim.opt.expandtab = true
+vim.opt.expandtab = false
 
 vim.opt.number = true
 vim.opt.relativenumber = true

@@ -8,7 +8,7 @@ local lsp_zero = require('lsp-zero')
 local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
 require('mason').setup({})
 require('mason-lspconfig').setup({
-  ensure_installed = {
+	ensure_installed = {
 		'ts_ls',
 		'clangd',
 		'lua_ls',
@@ -17,19 +17,28 @@ require('mason-lspconfig').setup({
 		'remark_ls',
 		'pyright'
 	},
-  handlers = {
-    function(server_name)
-     require('lspconfig')[server_name].setup({
+	handlers = {
+		function(server_name)
+			require('lspconfig')[server_name].setup({
 				capabilities = lsp_capabilities,
+				on_attach = function(_, bufnr)
+					vim.api.nvim_create_autocmd("BufWritePre", {
+						group = vim.api.nvim_create_augroup("LspFormatting", { clear = true }),
+						buffer = bufnr,
+						callback = function()
+							vim.lsp.buf.format({ async = false })
+						end
+					})
+				end
 			})
-    end,
-    lua_ls = function ()
-    	local lua_opts = lsp_zero.nvim_lua_ls()
-	require('lspconfig').lua_ls.setup(lua_opts)
-    end
-  },
+		end
+	},
+	lua_ls = function()
+		local lua_opts = lsp_zero.nvim_lua_ls()
+		require('lspconfig').lua_ls.setup(lua_opts)
+	end
 })
-vim.diagnostic.config({virtual_text = false})
+vim.diagnostic.config({ virtual_text = false })
 vim.opt.updatetime = 250
 vim.cmd [[autocmd CursorHold * lua vim.diagnostic.open_float(nil, {focus=false})]]
 --------- auto Completion --------
@@ -40,29 +49,31 @@ local lspkind = require('lspkind')
 require("luasnip.loaders.from_vscode").lazy_load()
 cmp.setup({
 	sources = {
-		{name = 'nvim_lsp'},
-		{name = 'nvim_lua'},
-		{name = 'buffer',keyword_length = 3},
-		{name = 'luasnip'},
-		{name = 'path'},
+		{ name = 'nvim_lsp' },
+		{ name = 'nvim_lua' },
+		{ name = 'buffer',  keyword_length = 3 },
+		{ name = 'luasnip' },
+		{ name = 'path' },
 	},
 	snippet = {
 		expand = function(args)
-			require'luasnip'.lsp_expand(args.body)
-		end},
---	completion = {autocomplete = false},
+			require 'luasnip'.lsp_expand(args.body)
+		end
+	},
+	--	completion = {autocomplete = false},
 	window = {
 		completion = cmp.config.window.bordered(),
 		documentation = cmp.config.window.bordered(),
 	},
 	mapping = cmp.mapping.preset.insert({
-		['<CR>'] = cmp.mapping(function (fallback)
-			if(cmp.visible()) then
-				if(luasnip.expandable())then
-				luasnip.expand()
+		['<CR>'] = cmp.mapping(function(fallback)
+			if (cmp.visible()) then
+				if (luasnip.expandable()) then
+					luasnip.expand()
 				else
-					cmp.confirm({select = true,
-					behavior = cmp.ConfirmBehavior.Insert,
+					cmp.confirm({
+						select = true,
+						behavior = cmp.ConfirmBehavior.Insert,
 					})
 				end
 			else
@@ -91,26 +102,26 @@ cmp.setup({
 		-- 	end
 		-- 	end,{"i","s"}),
 
-		["<Tab>"] = cmp.mapping(function (fallback)
-			if(cmp.visible()) then
+		["<Tab>"] = cmp.mapping(function(fallback)
+			if (cmp.visible()) then
 				cmp.select_next_item()
 			else
 				fallback()
 			end
-		end,{'i','s'}),
-		["<S-Tab>"] = cmp.mapping(function (fallback)
-			if(cmp.visible()) then
+		end, { 'i', 's' }),
+		["<S-Tab>"] = cmp.mapping(function(fallback)
+			if (cmp.visible()) then
 				cmp.select_prev_item()
 			else
 				fallback()
 			end
-		end,{'i','s'}),
-		['\\]'] = cmp.mapping(function ()
+		end, { 'i', 's' }),
+		['\\]'] = cmp.mapping(function()
 			luasnip.jump(1)
-		end,{'i','s'}),
-		['\\['] = cmp.mapping(function ()
+		end, { 'i', 's' }),
+		['\\['] = cmp.mapping(function()
 			luasnip.jump(-1)
-		end,{'i','s'}),
+		end, { 'i', 's' }),
 	}),
 
 	formatting = {
@@ -121,7 +132,7 @@ cmp.setup({
 				nvim_lsp = "[LSP]",
 				nvim_lua = "[api]",
 				path = "[api]",
-				luasnip ="[snip]",
+				luasnip = "[snip]",
 			},
 		},
 	},
