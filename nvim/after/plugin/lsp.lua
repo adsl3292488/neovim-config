@@ -20,6 +20,7 @@ require('mason-lspconfig').setup({
 	handlers = {
 		function(server_name)
 			require('lspconfig')[server_name].setup({
+				root_dir = require('lspconfig/util').root_pattern('.git', '.root'),
 				capabilities = lsp_capabilities,
 				on_attach = function(_, bufnr)
 					vim.api.nvim_create_autocmd("BufWritePre", {
@@ -29,7 +30,17 @@ require('mason-lspconfig').setup({
 							vim.lsp.buf.format({ async = false })
 						end
 					})
-				end
+				end,
+				settings = {
+					Lua = {
+						completion = {
+							callSnippet = "Both"
+						},
+						diagnostics = {
+							globals = { "vim" }
+						}
+					},
+				}
 			})
 		end
 	},
@@ -38,9 +49,7 @@ require('mason-lspconfig').setup({
 		require('lspconfig').lua_ls.setup(lua_opts)
 	end
 })
-vim.diagnostic.config({ virtual_text = false })
-vim.opt.updatetime = 250
-vim.cmd [[autocmd CursorHold * lua vim.diagnostic.open_float(nil, {focus=false})]]
+
 --------- auto Completion --------
 local cmp = require('cmp')
 -- local cmp_action = require('lsp-zero').cmp_action()
@@ -58,7 +67,7 @@ cmp.setup({
 	snippet = {
 		expand = function(args)
 			require 'luasnip'.lsp_expand(args.body)
-		end
+		end,
 	},
 	--	completion = {autocomplete = false},
 	window = {
@@ -108,7 +117,7 @@ cmp.setup({
 			else
 				fallback()
 			end
-		end, { 'i', 's' }),
+		end),
 		["<S-Tab>"] = cmp.mapping(function(fallback)
 			if (cmp.visible()) then
 				cmp.select_prev_item()
@@ -123,7 +132,6 @@ cmp.setup({
 			luasnip.jump(-1)
 		end, { 'i', 's' }),
 	}),
-
 	formatting = {
 		format = lspkind.cmp_format {
 			with_text = true,
@@ -136,4 +144,17 @@ cmp.setup({
 			},
 		},
 	},
+	cmp.setup.cmdline(':', {
+		mapping = cmp.mapping.preset.cmdline(),
+		sources = cmp.config.sources({
+			{ name = 'path' },
+			{ name = 'cmdline' },
+		})
+	}),
+	cmp.setup.cmdline({ '/', '?' }, {
+		mapping = cmp.mapping.preset.cmdline(),
+		sources = cmp.config.sources({
+			{ name = 'buffer' },
+		})
+	})
 })
