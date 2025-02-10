@@ -117,7 +117,7 @@ cmp.setup({
 			else
 				fallback()
 			end
-		end),
+		end, { 'i', 's' }),
 		["<S-Tab>"] = cmp.mapping(function(fallback)
 			if (cmp.visible()) then
 				cmp.select_prev_item()
@@ -131,6 +131,20 @@ cmp.setup({
 		['\\['] = cmp.mapping(function()
 			luasnip.jump(-1)
 		end, { 'i', 's' }),
+		['<A-n>'] = cmp.mapping(function(fallback)
+			if (cmp.visible()) then
+				cmp.select_next_item()
+			else
+				fallback()
+			end
+		end, { 'c' }),
+		['<A-m>'] = cmp.mapping(function(fallback)
+			if (cmp.visible()) then
+				cmp.select_prev_item()
+			else
+				fallback()
+			end
+		end, { 'c' }),
 	}),
 	formatting = {
 		format = lspkind.cmp_format {
@@ -144,17 +158,15 @@ cmp.setup({
 			},
 		},
 	},
-	cmp.setup.cmdline(':', {
-		mapping = cmp.mapping.preset.cmdline(),
-		sources = cmp.config.sources({
-			{ name = 'path' },
-			{ name = 'cmdline' },
-		})
-	}),
-	cmp.setup.cmdline({ '/', '?' }, {
-		mapping = cmp.mapping.preset.cmdline(),
-		sources = cmp.config.sources({
-			{ name = 'buffer' },
-		})
-	})
+})
+cmp.setup.cmdline(':', {
+	sources = {
+		{ name = 'path' },
+		{ name = 'cmdline' }
+	}
+})
+cmp.setup.cmdline({ '/', '?' }, {
+	sources = {
+		{ name = 'buffer' }
+	}
 })
