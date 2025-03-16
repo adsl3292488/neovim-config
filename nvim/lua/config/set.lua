@@ -24,7 +24,7 @@ vim.opt.incsearch = true
 vim.opt.termguicolors = true
 vim.opt.showmode = false
 
-vim.opt.undofile =true
+vim.opt.undofile = true
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 
 vim.opt.scrolloff = 8

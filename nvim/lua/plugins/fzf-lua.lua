@@ -1,0 +1,51 @@
+return {
+	{
+		"ibhagwan/fzf-lua",
+		-- optional for icon support
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		opts = {
+			files = {
+				git_icons = false,
+			},
+		},
+		keys = {
+			-- Fzf-lua all function
+			{ "<leader>ff", "<cmd>FzfLua<CR>",                       mode = "n" },
+			-- specific directory to search
+			{
+				"<leader>p",
+				function()
+					local path = vim.fn.input("search > ", "", "file")
+					require 'fzf-lua'.files({ cwd = path })
+					-- vim.fn.chdir(path)
+				end,
+				mode = "n"
+			},
+			-- find files
+			{ "<C-p>",      "<cmd>FzfLua files<CR>",                 mode = "n", silent = true },
+			-- find files from buffer
+			{ "<C-n>",      "<cmd>FzfLua buffers<CR>",               mode = "n" },
+			-- grep string
+			{ "<A-f>",      "<cmd>FzfLua grep<CR>",                  mode = "n" },
+			-- grep string under cursor
+			{ "<C-f>",      "<cmd>FzfLua grep_cword<CR>",            mode = "n" },
+			-- grep string in visual mode
+			{ "<C-f>",      "<cmd>FzfLua grep_visual<CR>",           mode = "v" },
+			-- list workspace symbols
+			{ "<A-o>",      "<cmd>FzfLua lsp_workspace_symbols<CR>", mode = "n" },
+			-- list documents symbols
+			{ "<A-p>",      "<cmd>FzfLua lsp_document_symbols<CR>",  mode = "n" },
+			-- lsp references
+			{ "<A-j>",      "<cmd>FzfLua lsp_references<CR>",        mode = "n" },
+			-- lsp definitions
+			{ "<A-h>",      "<cmd>FzfLua lsp_definitions<CR>",       mode = "n" },
+			-- lsp declarations
+			{ "<A-k>",      "<cmd>FzfLua lsp_declarations<CR>",      mode = "n" },
+			-- lsp type definitions
+			{ "<A-l>",      "<cmd>FzfLua lsp_typedefs<CR>",          mode = "n" },
+			-- lsp diagnostics
+			{ "<F8>",       "<cmd>FzfLua diagnostics_workspace<CR>", mode = "n" },
+		},
+
+	},
+}
