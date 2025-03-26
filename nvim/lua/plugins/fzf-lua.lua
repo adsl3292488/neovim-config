@@ -3,6 +3,14 @@ return {
 		"ibhagwan/fzf-lua",
 		-- optional for icon support
 		dependencies = { "nvim-tree/nvim-web-devicons" },
+		build = function()
+			local fzf_repo = "https://github.com/junegunn/fzf.git"
+			local fzf_path = vim.fn.expand("~/.fzf")
+			if not (vim.uv or vim.loop).fs_stat(fzf_path) then
+				vim.fn.system({ "git", "clone", "--depth", "1", fzf_repo, fzf_path })
+				vim.fn.system({ fzf_path .. "/install" })
+			end
+		end,
 		opts = {
 			files = {
 				git_icons = false,

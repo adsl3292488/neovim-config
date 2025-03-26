@@ -1,4 +1,26 @@
 return {
+	{
+		'stevearc/conform.nvim',
+		opts = {
+			formatters_by_ft = {
+				lua = { "stylua" },
+				c = { "clang-format" },
+				cpp = { "clang-format" },
+				python = { "black" },
+				sh = { "shfmt" },
+			},
+		},
+		keys = {
+			{
+				'ff',
+				function()
+					require("conform").format({ async = false })
+					vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), 'n', true)
+				end,
+				mode = { 'v' }
+			},
+		},
+	},
 	{ 'williamboman/mason.nvim', config = true },
 	{
 		'williamboman/mason-lspconfig.nvim',
@@ -10,6 +32,18 @@ return {
 			local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
 			lsp_capabilities.offsetEncoding = { 'utf-16' }
 			local augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
+
+			vim.g.autoformatflag = false
+			vim.api.nvim_create_user_command('SetAutoFormatEnable', function(opts)
+				if (opts.args == 'true') then
+					vim.g.autoformatflag = true
+				elseif (opts.args == 'false') then
+					vim.g.autoformatflag = false
+				else
+					print('Invalid argument, use true or false')
+				end
+			end, { nargs = 1 })
+
 			return {
 				ensure_installed = {
 					'clangd',
@@ -33,7 +67,9 @@ return {
 									group = augroup,
 									buffer = bufnr,
 									callback = function()
-										vim.lsp.buf.format({ async = false })
+										if (vim.g.autoformatflag == true) then
+											require('conform').format({ async = false, bufnr = bufnr })
+										end
 									end
 								})
 							end,
@@ -82,7 +118,7 @@ return {
 					{ name = 'nvim_lua' },
 					{ name = 'buffer',  keyword_length = 3 },
 					{ name = 'luasnip' },
-					{ name = 'path' },
+					{ name = 'path',    keyword_length = 3 },
 				},
 				-- completion = { autocomplete = false },
 				snippet = {
