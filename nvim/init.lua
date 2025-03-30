@@ -1,5 +1,5 @@
-require("setting")
----- Colors Name ---- 
+require("config")
+---- Colors Name ----
 -- catppuccin
 -- catppuccin-mocha
 -- catppuccin-macchiato
