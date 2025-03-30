@@ -45,14 +45,23 @@ check_pwd() {
 		export password=$passwd
 		echo "$password" | sudo -S true
 	fi
+  
 	if [[ $? -eq 0 ]]; then
 		return 0
+	else
+		read -p "[sudo] password for $USER: " -s password
+		echo $password | sudo -S true
+		if [[ $? -eq 0 ]]; then
+			return 0
+		else
+			echo "Password incorrect, please try again"
+			return 1
+		fi
 	fi
-	echo "Password incorrect ,please try again"
-	return 1
 }
 
 install_lazygit() {
+
     check_pwd
     if [[ $? -eq 1 ]]; then
         exit 1
@@ -106,18 +115,20 @@ install_neovim() {
 	tar xzvf ./$PACKAGE_DIR/v"$neovim_ver".tar.gz -C $PACKAGE_DIR
 	cd ./$PACKAGE_DIR/neovim-"$neovim_ver" || exit 1
 	make CMAKE_BUILD_TYPE=Release -j4
+
 	echo "$password" | sudo -S make install
 }
+
 neovim_setup() {
 	echo "-----NeoVim Setup-----"
-    [ ! -d "$HOME/.config" ] && mkdir -p "$HOME/.config"
+  [ ! -d "$HOME/.config" ] && mkdir -p "$HOME/.config"
+
 	if [ -f ./nvim.zip ]; then
 		unzip ./nvim.zip -d "$HOME"/.config/
 	else
 		cp -r "$ROOT_DIR"/nvim ~/.config/
 	fi
-
-    [ ! -f "$HOME/.clang-format" ] && cp "$ROOT_DIR/.clang-format" "$HOME/"
+  [ ! -f "$HOME/.clang-format" ] && cp "$ROOT_DIR/.clang-format" "$HOME/"
 }
 
 all() {
