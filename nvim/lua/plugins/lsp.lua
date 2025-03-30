@@ -1,26 +1,4 @@
 return {
-	{
-		'stevearc/conform.nvim',
-		opts = {
-			formatters_by_ft = {
-				lua = { "stylua" },
-				c = { "clang-format" },
-				cpp = { "clang-format" },
-				python = { "black" },
-				sh = { "shfmt" },
-			},
-		},
-		keys = {
-			{
-				'ff',
-				function()
-					require("conform").format({ async = false })
-					vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), 'n', true)
-				end,
-				mode = { 'v' }
-			},
-		},
-	},
 	{ 'williamboman/mason.nvim', config = true },
 	{
 		'williamboman/mason-lspconfig.nvim',
@@ -43,6 +21,11 @@ return {
 					print('Invalid argument, use true or false')
 				end
 			end, { nargs = 1 })
+
+			vim.keymap.set("v", "ff",function ()
+				vim.lsp.buf.format({ async = false })
+				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), 'n', true)
+			end)
 
 			return {
 				ensure_installed = {
@@ -68,7 +51,7 @@ return {
 									buffer = bufnr,
 									callback = function()
 										if (vim.g.autoformatflag == true) then
-											require('conform').format({ async = false, bufnr = bufnr })
+											vim.lsp.buf.format({ async = false, bufnr = bufnr })
 										end
 									end
 								})
@@ -82,7 +65,7 @@ return {
 										callSnippet = "Both"
 									},
 									diagnostics = {
-										globals = { "vim" }
+										globals = { "vim","Snacks" }
 									}
 								},
 							}

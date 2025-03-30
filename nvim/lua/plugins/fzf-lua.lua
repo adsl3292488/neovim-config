@@ -14,6 +14,8 @@ return {
 		opts = {
 			files = {
 				git_icons = false,
+				-- no_ignore =true,
+				-- formatter = "path.filename_first"
 			},
 		},
 		keys = {
