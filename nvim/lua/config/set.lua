@@ -31,12 +31,16 @@ vim.opt.scrolloff = 8
 vim.opt.updatetime = 50
 vim.opt.colorcolumn = "" -- 80
 vim.opt.signcolumn = "yes"
+vim.opt.completeopt = "menuone,popup,fuzzy"
 
 vim.opt.ruler = true
 vim.opt.encoding = "utf-8"
 -- Auto re-load file, when file is changed somewhere else
 vim.opt.autoread = true
-vim.cmd [[autocmd CursorHold * checktime]]
+vim.api.nvim_create_autocmd("CursorHold", {
+	pattern = "*",
+	command = "checktime",
+})
 
 vim.o.clipboard = "unnamedplus"
 -- Add keymap for open lazygit

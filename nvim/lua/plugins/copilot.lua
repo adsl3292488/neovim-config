@@ -59,10 +59,21 @@ return {
 		"CopilotC-Nvim/CopilotChat.nvim",
 		build = "make tikotken",
 		opts = {
+			prompts = {
+				Refactor = "Please refactor the following code to improve its clarity and readability.",
+				BetterNaming = "Please provide better names for the variables and functions in the following code.",
+				FixError = "Please expplain the error in the following code and provide a solution.",
+			}
 
 		},
 		keys = {
-			{ "<F4>", "<cmd> CopilotChatToggle<CR>", mode = { "n", "v", "i" } },
+			{ "<F4>",       "<cmd> CopilotChatToggle<CR>",       mode = { "n", "v", "i" }, desc = "Toggle Copilot Chat" },
+			{ "<leader>ae", "<cmd> CopilotChatExplain<CR>",      mode = { "n", "v" },      desc = "CopilotChat explain code" },
+			{ "<leader>ar", "<cmd> CopilotChatRefactor<CR>",     mode = { "n", "v" },      desc = "CopilotChat refactor code" },
+			{ "<leader>ao", "<cmd> CopilotChatOptimize<CR>",     mode = { "n", "v" },      desc = "Copilot Chat optimize code" },
+			{ "<leader>an", "<cmd> CopilotChatBetterNaming<CR>", mode = { "n", "v" },      desc = "CopilotChat better naming" },
+			{ "<leader>af", "<cmd> CopilotChatFixError<CR>",     mode = { "n", "v" },      desc = "CopilotChat fix error" },
+			{ "<leader>at", "<cmd> CopilotChatTests<CR>",        mode = { "n", "v" },      desc = "CopilotChat tests" },
 		}
 	}
 }
