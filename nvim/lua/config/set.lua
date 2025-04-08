@@ -43,5 +43,3 @@ vim.api.nvim_create_autocmd("CursorHold", {
 })
 
 vim.o.clipboard = "unnamedplus"
--- Add keymap for open lazygit
-vim.keymap.set("n", "<leader>lg", "<cmd>LazyGit<CR>", { silent = true })
