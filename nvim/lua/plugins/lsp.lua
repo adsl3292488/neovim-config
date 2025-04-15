@@ -22,7 +22,7 @@ return {
 				end
 			end, { nargs = 1 })
 
-			vim.keymap.set("v", "ff",function ()
+			vim.keymap.set("v", "ff", function()
 				vim.lsp.buf.format({ async = false })
 				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), 'n', true)
 			end)
@@ -41,9 +41,8 @@ return {
 						lspconfig_defaults.capabilities = vim.tbl_deep_extend("force",
 							lspconfig_defaults.capabilities,
 							lsp_capabilities)
-
-						require('lspconfig')[server_name].setup({
-							root_dir = require('lspconfig/util').root_pattern('.git', '.root'),
+						vim.lsp.config(server_name, {
+							root_markers = { '.git', '.root' },
 							capabilities = lsp_capabilities,
 							on_attach = function(_, bufnr)
 								vim.api.nvim_create_autocmd("BufWritePre", {
@@ -65,11 +64,12 @@ return {
 										callSnippet = "Both"
 									},
 									diagnostics = {
-										globals = { "vim","Snacks" }
+										globals = { "vim", "Snacks" }
 									}
 								},
 							}
 						})
+						vim.lsp.enable(server_name)
 					end,
 				},
 			}

@@ -39,16 +39,16 @@ return {
 			vim.opt.updatetime = 250
 			-- vim.api.nvim_create_autocmd("CursorHold", {
 			-- 	pattern = "*",
-			-- 	callback = function()
-			-- 		vim.diagnostic.open_float(nil, {
-			-- 			focusable = true,
-			-- 			severity = {
-			-- 				min = vim.diagnostic.severity.INFO,
-			-- 				max = vim.diagnostic.severity.ERROR,
-			-- 			},
-			-- 			border = 'rounded',
-			-- 		})
-			-- 	end,
+			-- callback = function()
+			-- 	vim.diagnostic.open_float(nil, {
+			-- 		focusable = true,
+			-- 		severity = {
+			-- 			min = vim.diagnostic.severity.INFO,
+			-- 			max = vim.diagnostic.severity.ERROR,
+			-- 		},
+			-- 		border = 'rounded',
+			-- 	})
+			-- end,
 			-- })
 			vim.api.nvim_create_autocmd("BufWritePost", {
 				buffer = 0,
