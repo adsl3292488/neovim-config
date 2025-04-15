@@ -148,7 +148,7 @@ return {
 						else
 							fallback()
 						end
-					end, { "i", "s" }),
+					end, { "i", "s", "c" }),
 					['<S-Tab>'] = cmp.mapping(function(fallback)
 						if (cmp.visible()) then
 							cmp.select_prev_item()
@@ -157,37 +157,9 @@ return {
 						else
 							fallback()
 						end
-					end, { "i", "s" }),
-					['\\]'] = cmp.mapping(function(fallback)
-						if (luasnip.expandable(1)) then
-							luasnip.jump(1)
-						else
-							fallback()
-						end
-					end, { 'i', 's' }),
-					['\\['] = cmp.mapping(function(fallback)
-						if (luasnip.jumpable(-1)) then
-							luasnip.jump(-1)
-						else
-							fallback()
-						end
-					end, { 'i', 's' }),
+					end, { "i", "s", "c" }),
 					["<C-d>"] = cmp.mapping.scroll_docs(-4),
 					["<C-f>"] = cmp.mapping.scroll_docs(4),
-					['<A-n>'] = cmp.mapping(function(fallback)
-						if (cmp.visible()) then
-							cmp.select_next_item()
-						else
-							fallback()
-						end
-					end, { 'c' }),
-					['<A-m>'] = cmp.mapping(function(fallback)
-						if (cmp.visible()) then
-							cmp.select_prev_item()
-						else
-							fallback()
-						end
-					end, { 'c' }),
 				}),
 				cmp.setup.cmdline(':', {
 					sources = {
