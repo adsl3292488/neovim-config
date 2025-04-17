@@ -37,9 +37,13 @@ vim.opt.ruler = true
 vim.opt.encoding = "utf-8"
 -- Auto re-load file, when file is changed somewhere else
 vim.opt.autoread = true
-vim.api.nvim_create_autocmd("CursorHold", {
-	pattern = "*",
-	command = "checktime",
+vim.api.nvim_create_autocmd({ "CursorHold", "TermClose", "TermLeave" }, {
+	group = vim.api.nvim_create_augroup("AutoReloadFile", { clear = true }),
+	callback = function()
+		if (vim.o.filetype ~= "nofile") then
+			vim.cmd("checktime")
+		end
+	end
 })
 
 vim.o.clipboard = "unnamedplus"

@@ -25,31 +25,31 @@ return {
 		config = function()
 			vim.diagnostic.config({
 				-- virtual_text = false,
-				virtual_lines = {
-					current_line = true,
-					severity_sort = true,
-					severity = {
-						min = vim.diagnostic.severity.INFO,
-						max = vim.diagnostic.severity.ERROR,
-					},
-				},
+				-- virtual_lines = {
+				-- 	current_line = true,
+				-- 	severity_sort = true,
+				-- 	severity = {
+				-- 		min = vim.diagnostic.severity.INFO,
+				-- 		max = vim.diagnostic.severity.ERROR,
+				-- 	},
+				-- },
 				update_in_insert = false,
 				severity_sort = true,
 			})
 			vim.opt.updatetime = 250
-			-- vim.api.nvim_create_autocmd("CursorHold", {
-			-- 	pattern = "*",
-			-- callback = function()
-			-- 	vim.diagnostic.open_float(nil, {
-			-- 		focusable = true,
-			-- 		severity = {
-			-- 			min = vim.diagnostic.severity.INFO,
-			-- 			max = vim.diagnostic.severity.ERROR,
-			-- 		},
-			-- 		border = 'rounded',
-			-- 	})
-			-- end,
-			-- })
+			vim.api.nvim_create_autocmd("CursorHold", {
+				pattern = "*",
+			callback = function()
+				vim.diagnostic.open_float(nil, {
+					focusable = true,
+					severity = {
+						min = vim.diagnostic.severity.INFO,
+						max = vim.diagnostic.severity.ERROR,
+					},
+					border = 'rounded',
+				})
+			end,
+			})
 			vim.api.nvim_create_autocmd("BufWritePost", {
 				buffer = 0,
 				callback = function()
