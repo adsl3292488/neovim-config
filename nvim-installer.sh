@@ -41,7 +41,7 @@ check_pwd() {
     fi
 	echo "" | sudo -S true 2>/dev/null
 	if [[ $? -eq 1 ]]; then
-		read -p "[sudo] password for $USER: " -s passwd
+		read -r -p "[sudo] password for $USER: " -s passwd
 		export password=$passwd
 		echo "$password" | sudo -S true
 	fi
@@ -49,8 +49,8 @@ check_pwd() {
 	if [[ $? -eq 0 ]]; then
 		return 0
 	else
-		read -p "[sudo] password for $USER: " -s password
-		echo $password | sudo -S true
+		read -r -p "[sudo] password for $USER: " -s password
+		echo "$password" | sudo -S true
 		if [[ $? -eq 0 ]]; then
 			return 0
 		else
@@ -83,8 +83,9 @@ download_package() {
 	fi
 
 	echo "$password" | sudo -S apt-get update
-	echo "apt install $apt_package"
-	for i in "${apt_arr[@]}"; do
+	 echo "apt install $apt_package"
+	# shellcheck disable=SC2068
+	for i in ${apt_arr[@]}; do
 		echo "apt install $i"
 		echo "$password" | sudo -S apt-get install -y "$i"
 	done
