@@ -14,7 +14,7 @@ return {
 		opts = {
 			files = {
 				git_icons = false,
-				-- no_ignore =true,
+				-- no_ignore = true,
 				formatter = "path.filename_first"
 			},
 		},

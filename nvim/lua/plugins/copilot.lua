@@ -57,7 +57,7 @@ return {
 	},
 	{
 		"CopilotC-Nvim/CopilotChat.nvim",
-		build = "make tikotken",
+		-- build = "make tikotken",
 		opts = {
 			prompts = {
 				Explain ="Explain what the following code does in simple terms.",
