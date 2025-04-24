@@ -43,14 +43,18 @@ return {
 	-- 			long_message_to_split = false, -- long messages will be sent to a split
 	-- 			inc_rename = false, -- enables an input dialog for inc-rename.nvim
 	-- 		},
+	-- 		cmdline ={
+	-- 			enabled = true,
+	-- 			view = "cmdline_popup",
+	-- 		},
 	-- 		notify = {
 	-- 			enabled = false,
 	-- 			view = "notify",
 	--
 	-- 		},
 	-- 		messages = {
-	-- 			enabled = true,
-	-- 			view = "cmdline",
+	-- 			enabled = false,
+	-- 			view = "notify",
 	-- 		}
 	-- 	},
 	-- 	dependencies = {

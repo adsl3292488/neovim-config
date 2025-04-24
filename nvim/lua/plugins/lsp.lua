@@ -84,6 +84,7 @@ return {
 		'saghen/blink.cmp',
 		dependencies = {
 			{ 'rafamadriz/friendly-snippets' },
+			{ 'L3MON4D3/LuaSnip',            version = 'v2.*', build = "make install jsregexp" },
 			-- 'mikavilpas/blink-ripgrep.nvim'
 		},
 		version = '1.*',
@@ -94,24 +95,32 @@ return {
 			-- 		"snippets",
 			-- 		"buffer",
 			-- 		"path",
-			-- "ripgrep",
-			-- },
+			-- 		-- "ripgrep",
+			-- 	},
 			-- providers = {
-			-- ripgrep = {
-			-- 	module = "blink-ripgrep",
-			-- 	name = "Ripgrep",
-			-- 	opts = {
-			-- 		prefix_min_len = 3,
-			-- 		context_size = 5,
-			-- 		max_filesize = "1M",
-			-- 		project_root_markers = { ".git", "compile_commands.json", ".root" },
-			-- 		search_casing = "--ignore-case", -- smart-case,case-sensitive
-			-- 	}
-			-- },
-			-- 	}
-			-- },
-			-- snippets = {
-			-- },
+			-- 	ripgrep = {
+			-- 		module = "blink-ripgrep",
+			-- 		name = "Ripgrep",
+			-- 		opts = {
+			-- 			prefix_min_len = 3,
+			-- 			context_size = 5,
+			-- 			max_filesize = "1M",
+			-- 			project_root_markers = { ".git", "compile_commands.json", ".root" },
+			-- 			search_casing = "--ignore-case", -- smart-case,case-sensitive
+			-- 		}
+			-- 	},
+			-- }
+			snippets = {
+				-- preset = "luasnip"
+				expand = function(snippet) require('luasnip').lsp_expand(snippet) end,
+				active = function(filter)
+					if filter and filter.direction then
+						return require('luasnip').jumpable(filter.direction)
+					end
+					return require('luasnip').in_snippet()
+				end,
+				jump = function(direction) require('luasnip').jump(direction) end,
+			},
 			keymap = {
 				preset = 'enter',
 				['<Tab>'] = { 'snippet_forward', 'select_next', 'fallback' },
@@ -130,6 +139,7 @@ return {
 				},
 				menu = {
 					auto_show = true,
+					border = "rounded",
 					draw = {
 						columns = {
 							{ "label",     "label_description", gap = 1 },

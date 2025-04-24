@@ -14,7 +14,7 @@ return {
 		opts = {
 			files = {
 				git_icons = false,
-				-- no_ignore = true,
+				no_ignore = true,
 				formatter = "path.filename_first"
 			},
 		},
@@ -25,9 +25,11 @@ return {
 			{
 				"<leader>p",
 				function()
-					local path = vim.fn.input("search > ", "", "file")
-					require 'fzf-lua'.files({ cwd = path })
-					-- vim.fn.chdir(path)
+					vim.ui.input({ prompt = "search path", completion ='dir_in_path'}, function(input)
+						if input then
+							require("fzf-lua").files({ cwd = input })
+						end
+					end)
 				end,
 				mode = "n"
 			},
