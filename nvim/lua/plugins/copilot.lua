@@ -60,7 +60,7 @@ return {
 		-- build = "make tikotken",
 		opts = {
 			prompts = {
-				Explain ="Explain what the following code does in simple terms.",
+				Explain = "Explain what the following code does in simple terms.",
 				Optimize = "Optimize the code to balance performance,readability and maintainability.",
 				Refactor = "Please refactor the following code to improve its clarity and readability.",
 				Review = "Please review the following code and provide suggestions for improvement.",
