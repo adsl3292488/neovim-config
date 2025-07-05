@@ -57,10 +57,10 @@ return {
 	},
 	{
 		"CopilotC-Nvim/CopilotChat.nvim",
-		build = "make tikotken",
+		-- build = "make tikotken",
 		opts = {
 			prompts = {
-				Explain ="Explain what the following code does in simple terms.",
+				Explain = "Explain what the following code does in simple terms.",
 				Optimize = "Optimize the code to balance performance,readability and maintainability.",
 				Refactor = "Please refactor the following code to improve its clarity and readability.",
 				Review = "Please review the following code and provide suggestions for improvement.",
@@ -74,6 +74,7 @@ return {
 			{ "<F4>",       "<cmd> CopilotChatToggle<CR>",       mode = { "n", "v", "i" }, desc = "Toggle Copilot Chat" },
 			{ "<leader>ae", "<cmd> CopilotChatExplain<CR>",      mode = { "n", "v" },      desc = "CopilotChat explain code" },
 			{ "<leader>ar", "<cmd> CopilotChatRefactor<CR>",     mode = { "n", "v" },      desc = "CopilotChat refactor code" },
+			{ "<leader>av", "<cmd> CopilotChatReview<CR>",       mode = { "n", "v" },      desc = "CopilotChat review code" },
 			{ "<leader>ao", "<cmd> CopilotChatOptimize<CR>",     mode = { "n", "v" },      desc = "Copilot Chat optimize code" },
 			{ "<leader>an", "<cmd> CopilotChatBetterNaming<CR>", mode = { "n", "v" },      desc = "CopilotChat better naming" },
 			{ "<leader>af", "<cmd> CopilotChatFixError<CR>",     mode = { "n", "v" },      desc = "CopilotChat fix error" },

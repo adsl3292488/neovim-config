@@ -41,7 +41,7 @@ return {
 				pattern = "*",
 			callback = function()
 				vim.diagnostic.open_float(nil, {
-					focusable = true,
+					focusable = false,
 					severity = {
 						min = vim.diagnostic.severity.INFO,
 						max = vim.diagnostic.severity.ERROR,

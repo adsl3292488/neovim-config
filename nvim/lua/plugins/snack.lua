@@ -10,7 +10,7 @@ return {
 		indent = { enabled = true },
 		input = { enabled = true },
 		notifier = {
-			enabled = true,
+			enabled = false,
 			timeout = 3000,
 		},
 		picker = {
@@ -34,8 +34,8 @@ return {
 	},
 	keys = {
 		{ "<F2>",       function() Snacks.picker.explorer() end,                                desc = "Open Explorer" },
-		{ "<S-p>",      function() Snacks.picker.smart() end,                                   desc = "Smart Find Files" },
-		{ "<S-f>",      function() Snacks.picker.grep() end,                                    desc = "Grep" },
+		{ "<C-A-p>",    function() Snacks.picker.smart() end,                                   desc = "Smart Find Files" },
+		{ "<C-A-f>",    function() Snacks.picker.grep() end,                                    desc = "Grep" },
 		{ "<A-n>",      function() Snacks.picker.projects() end,                                desc = "Find Projects" },
 		{ "<leader>gb", function() Snacks.picker.grep_buffers() end,                            desc = "Grep Open Buffers" },
 		{ "<leader>rt", function() Snacks.picker.recent() end,                                  desc = "Open Recent Files" },
