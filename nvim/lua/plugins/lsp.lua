@@ -54,11 +54,6 @@ return {
 				end
 			end, { nargs = '?', complete = function() return { 'true', 'false' } end })
 
-			vim.keymap.set("v", "ff", function()
-				vim.lsp.buf.format({ async = false })
-				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), 'n', true)
-			end)
-
 			vim.api.nvim_create_autocmd("BufWritePre", {
 				group = augroup,
 				callback = function(ev)
@@ -89,7 +84,13 @@ return {
 		},
 		version = '1.*',
 		opts = {
-			-- sources = {
+			sources = {
+				providers = {
+					buffer = {
+						min_keyword_length = 3,
+					}
+				}
+			},
 			-- 	default = {
 			-- 		"lsp",
 			-- 		"snippets",
@@ -122,8 +123,20 @@ return {
 			},
 			keymap = {
 				preset = 'enter',
-				['<Tab>'] = { 'snippet_forward', 'select_next', 'fallback' },
-				['<S-Tab>'] = { 'snippet_backward', 'select_prev', 'fallback' },
+				['<Tab>'] = { function(cmp)
+					if cmp.is_menu_visible() then
+						return cmp.select_next()
+					else
+						return cmp.snippet_forward()
+					end
+				end, 'fallback' },
+				['<S-Tab>'] = { function(cmp)
+					if cmp.is_menu_visible() then
+						return cmp.select_prev()
+					else
+						return cmp.snippet_backward()
+					end
+				end, 'fallback' },
 			},
 			completion = {
 				trigger = {
