@@ -1,149 +1,198 @@
 #!/bin/bash
-SUPPORTED_OS_VERSIONS=$(awk -F '=' '/VERSION_ID/ {gsub(/"/, "", $2); print $2}' /etc/os-release)
-PACKAGE_DIR=./vim-packege
-ROOT_DIR=$(pwd)
+set -e
+readonly PLATFORM=$(uname -s)
+readonly SUPPORTED_OS_VERSIONS=$(awk -F '=' '/VERSION_ID/ {gsub(/"/, "", $2); print $2}' /etc/os-release)
+readonly PACKAGE_DIR=./vim-package
+readonly ROOT_DIR=$(pwd)
 
 help() {
 	echo "----------------------------------------------------------"
 	echo "---- nvim_install.sh help "
 	echo "---- nvim_install.sh package > Download Package"
 	echo "---- nvim_install.sh neovim > Install Neovim and setting"
+	echo "---- nvim_install.sh nodejs > Install Nodejs"
+	echo "---- nvim_install.sh fd > Install fd"
+	echo "---- nvim_install.sh lazygit > Install lazygit"
 	echo "---- nvim_install.sh all"
 	echo "----------------------------------------------------------"
 }
 
 check_ver() {
-	if [ "$SUPPORTED_OS_VERSIONS" == "22.04" ]; then
+	if [ "$PLATFORM" == "Linux" ]; then
+		case "$SUPPORTED_OS_VERSIONS" in
+		"22.04")
+			nodejs_ver=22.x
+			apt_packages=(gcc g++ curl wget git ripgrep build-essential make
+				cmake python3.10 libpython3-dev python3-distutils python3-pip clang
+				clang-tidy clang-format universal-ctags bear libtool-bin automake
+				autoconf bison gperf flex texinfo libncurses5 libncurses5-dev
+				libpsl-dev ninja-build gettext unzip pkg-config rename
+				software-properties-common xclip lua5.4 luarocks snapd rust-1.76-all)
+			;;
+		"24.04")
+			nodejs_ver=24.x
+			apt_packages=(gcc g++ curl wget git ripgrep build-essential make
+				cmake python3.10 libpython3-dev python3-distutils python3-pip clang
+				clang-tidy clang-format universal-ctags bear libtool-bin automake
+				autoconf bison gperf flex texinfo libncurses5 libncurses5-dev
+				libpsl-dev ninja-build gettext unzip pkg-config rename
+				software-properties-common xclip lua5.4 luarocks snapd rust-1.76-all)
+			;;
+		*)
+			nodejs_ver=20.x
+			apt_packages=(gcc g++ curl wget git ripgrep build-essential make cmake
+				python3.8 libpython3-dev python3-distutils python3-pip clang clang-tidy
+				clang-format universal-ctags bear libtool-bin automake autoconf bison
+				gperf flex texinfo libncurses5 libncurses5-dev libpsl-dev ninja-build
+				gettext unzip pkg-config rename software-properties-common xclip lua5.3
+				luarocks snapd rust-1.62-all)
+			;;
+		esac
+	elif [ "$PLATFORM" == "debian" ]; then
 		nodejs_ver=22.x
-		neovim_ver=$(curl -s "https://api.github.com/repos/neovim/neovim/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
-		apt_package="gcc g++ curl wget git ripgrep build-essential make cmake python3.10 libpython3-dev python3-distutils python3-pip clang clang-tidy clang-format universal-ctags bear libtool-bin automake autoconf bison gperf flex texinfo libncurses5 libncurses5-dev libpsl-dev ninja-build gettext unzip pkg-config rename software-properties-common xclip lua5.4 luarocks snapd"
-		apt_arr=("$apt_package")
-	elif [ "$SUPPORTED_OS_VERSIONS" == "20.04" ]; then
-		nodejs_ver=20.x
-		neovim_ver=$(curl -s "https://api.github.com/repos/neovim/neovim/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
-		apt_package="gcc g++ curl wget git ripgrep build-essential make cmake python3.8 libpython3-dev python3-distutils python3-pip clang clang-tidy clang-format universal-ctags bear libtool-bin automake autoconf bison gperf flex texinfo libncurses5 libncurses5-dev libpsl-dev ninja-build gettext unzip pkg-config rename software-properties-common xclip lua5.3 luarocks snapd"
-		apt_arr=("$apt_package")
-	else
-		echo "Not Support system version"
-		exit 1
+		apt_packages=(gcc g++ curl wget git ripgrep build-essential make
+			cmake python3.10 libpython3-dev python3-distutils python3-pip clang
+			clang-tidy clang-format universal-ctags bear libtool-bin automake
+			autoconf bison gperf flex texinfo libncurses5 libncurses5-dev
+			libpsl-dev ninja-build gettext unzip pkg-config rename
+			software-properties-common xclip lua5.4 luarocks snapd rust-1.76-all)
+
 	fi
+
 	echo "------------------------------------"
-	echo "----SYSTEM version : $SUPPORTED_OS_VERSIONS----"
-	echo "----nodejs version : $nodejs_ver----"
-	echo "----neovim version : $neovim_ver----"
+	echo "----	PLATFORM : $PLATFORM"
+	echo "----	SYSTEM version : $SUPPORTED_OS_VERSIONS"
+	echo "----	nodejs version : $nodejs_ver"
 	echo "------------------------------------"
 }
 
 check_pwd() {
-    if ! command -v sudo >/dev/null 2>&1; then
-        echo "sudo command not found. Continuing without sudo."
-        return 2
-    fi
-	echo "" | sudo -S true 2>/dev/null
-	if [[ $? -eq 1 ]]; then
-		read -r -p "[sudo] password for $USER: " -s passwd
-		export password=$passwd
-		echo "$password" | sudo -S true
-	fi
-  
-	if [[ $? -eq 0 ]]; then
+	if ! command -v sudo >/dev/null 2>&1; then
+		echo "sudo command not found, Continue without sudo"
+		SUDO_AVAILABLE=0
+		SUDO_CMD=""
 		return 0
-	else
-		read -r -p "[sudo] password for $USER: " -s password
-		echo "$password" | sudo -S true
-		if [[ $? -eq 0 ]]; then
-			return 0
-		else
-			echo "Password incorrect, please try again"
-			return 1
-		fi
 	fi
-}
 
-install_lazygit() {
+	SUDO_AVAILABLE=1
+	SUDO_CMD="sudo"
+	sudo -v
+	while true; do
+		sudo -n true
+		sleep 60
+	done &
 
-    check_pwd
-    if [[ $? -eq 1 ]]; then
-        exit 1
-    fi
-	LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
-	curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
-	tar xf lazygit.tar.gz lazygit
-	echo "$password" | sudo -S install lazygit -D -t /usr/local/bin/
+	SUDO_PID=$!
+
+	trap "kill $SUDO_PID" EXIT
+	return 0
 }
 
 download_package() {
-    check_pwd
-    if [[ $? -eq 1 ]]; then
-        exit 1
-    fi
-	check_ver
 	if [[ ! -d "${PACKAGE_DIR}" ]]; then
 		mkdir -p $PACKAGE_DIR
 	fi
 
-	echo "$password" | sudo -S apt-get update
-	 echo "apt install $apt_package"
+	$SUDO_CMD apt-get update
+
 	# shellcheck disable=SC2068
-	for i in ${apt_arr[@]}; do
-		echo "apt install $i"
-		echo "$password" | sudo -S apt-get install -y "$i"
+	for pkg in "${apt_packages[@]}"; do
+		if dpkg -s "$pkg" >/dev/null 2>&1; then
+			echo "$pkg is already installed."
+			continue
+		fi
+		for i in {1..3}; do
+			echo -e "\033[32m apt install $pkg \033[0m"
+			if $SUDO_CMD apt-get install -y "$pkg"; then
+				break
+			elif [ "$1" -eq 3 ]; then
+				ecoh "Failed to install "$pkg" after 3 attempts."
+			else
+				echo "Retrying to install $pkg ($i/3)..."
+				sleep 2
+			fi
+		done
 	done
+
 	echo "------Install curl------"
-	echo "$password" | sudo -S snap install curl
-	echo "------Install nodejs------"
-	curl -fsSL https://deb.nodesource.com/setup_"$nodejs_ver" | sudo -E bash -
-	echo "$password" | sudo -S apt-get install -y nodejs
-	echo "$password" | sudo -S npm install -g tree-sitter-cli
-	echo "$password" | sudo -S npm install -g neovim
-	echo "------------------------------------"
-	FD_VERSION=$(curl -s "https://api.github.com/repos/sharkdp/fd/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
-	wget -P ./$PACKAGE_DIR https://github.com/sharkdp/fd/releases/download/v"${FD_VERSION}"/fd_"${FD_VERSION}"_amd64.deb
-	echo "$password" | sudo -S dpkg -i ./$PACKAGE_DIR/fd_"${FD_VERSION}"_amd64.deb
-	echo "downloading neovim-$neovim_ver"
-	wget -P ./$PACKAGE_DIR https://github.com/neovim/neovim/archive/refs/tags/v"$neovim_ver".tar.gz
-	echo "Install lazygit from github"
-	install_lazygit
-}
-
-install_neovim() {
-    check_pwd
-    if [[ $? -eq 1 ]]; then
-        exit 1
-    fi
-	check_ver
-	echo "-----Start to Install neovim-$neovim_ver-----"
-	tar xzvf ./$PACKAGE_DIR/v"$neovim_ver".tar.gz -C $PACKAGE_DIR
-	cd ./$PACKAGE_DIR/neovim-"$neovim_ver" || exit 1
-	make CMAKE_BUILD_TYPE=Release -j4
-
-	echo "$password" | sudo -S make install
+	if [ -f /.dockerenv ]; then
+		echo "Running in a Docker container, skipping curl installation."
+		return 0
+	else
+		$SUDO_CMD snap install curl
+	fi
 }
 
 neovim_setup() {
 	echo "-----NeoVim Setup-----"
-  [ ! -d "$HOME/.config" ] && mkdir -p "$HOME/.config"
+	[ ! -d "$HOME/.config" ] && mkdir -p "$HOME/.config"
 
 	if [ -f ./nvim.zip ]; then
 		unzip ./nvim.zip -d "$HOME"/.config/
 	else
 		cp -r "$ROOT_DIR"/nvim ~/.config/
 	fi
-  [ ! -f "$HOME/.clang-format" ] && cp "$ROOT_DIR/.clang-format" "$HOME/"
+	[ ! -f "$HOME/.clang-format" ] && cp "$ROOT_DIR/.clang-format" "$HOME/"
+}
+
+install_neovim() {
+	neovim_ver=$(curl -s "https://api.github.com/repos/neovim/neovim/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
+	echo "downloading neovim-$neovim_ver"
+	neovim_pkg="$PACKAGE_DIR/v${neovim_ver}.tar.gz"
+	if [[ ! -f "$neovim_pkg" ]]; then
+		wget -q --show-progress -P "$PACKAGE_DIR" "https://github.com/neovim/neovim/archive/refs/tags/v$neovim_ver.tar.gz"
+	fi
+
+	echo "Extracting Neovim..."
+	$SUDO_CMD tar xzvf "$PACKAGE_DIR/v${neovim_ver}.tar.gz" -C "$PACKAGE_DIR"
+	cd "$PACKAGE_DIR/neovim-${neovim_ver}" || exit 1
+	echo "Building Neovim..."
+	$SUDO_CMD make CMAKE_BUILD_TYPE=Release -j"$(nproc)"
+
+	echo "Installing Neovim..."
+	$SUDO_CMD make install
+}
+
+install_nodejs() {
+	echo "------Install nodejs------"
+	if [[ "$SUDO_AVAILABLE" -eq 0 ]]; then
+		curl -fsSL "https://deb.nodesource.com/setup_${nodejs_ver}" | bash -
+	else
+		curl -fsSL "https://deb.nodesource.com/setup_${nodejs_ver}" | sudo -E bash -
+	fi
+	$SUDO_CMD apt-get install -y nodejs
+	$SUDO_CMD npm install -g tree-sitter-cli
+	$SUDO_CMD npm install -g neovim
+}
+
+install_lazygit() {
+	echo "------Install lazygit------"
+	LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
+	curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+	tar xf lazygit.tar.gz lazygit
+	$SUDO_CMD install lazygit -D -t /usr/local/bin/
+}
+
+install_fd() {
+	echo "------Install fd------"
+	FD_VERSION=$(curl -s "https://api.github.com/repos/sharkdp/fd/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
+	wget -P ./$PACKAGE_DIR https://github.com/sharkdp/fd/releases/download/v"${FD_VERSION}"/fd_"${FD_VERSION}"_amd64.deb
+	$SUDO_CMD dpkg -i "$PACKAGE_DIR/fd_${FD_VERSION}_amd64.deb"
 }
 
 all() {
-    check_pwd
-    if [[ $? -eq 1 ]]; then
-        exit 1
-    fi
-	check_ver
 	download_package
+	install_fd
+	install_lazygit
+	install_nodejs
 	install_neovim
 	neovim_setup
 }
 
 main() {
+	check_pwd
+	check_ver
+
 	if [[ $# -lt 1 ]]; then
 		echo "The parameter is less than 1, please refer help"
 		echo "$0 help"
@@ -163,6 +212,15 @@ main() {
 		;;
 	"package")
 		download_package
+		;;
+	"fd")
+		install_fd
+		;;
+	"lazygit")
+		install_lazygit
+		;;
+	"nodejs")
+		install_nodejs
 		;;
 	*)
 		help
