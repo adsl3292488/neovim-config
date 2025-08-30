@@ -16,7 +16,7 @@ return {
 					local num = vim.v.count
 					vim.cmd { cmd = 'ToggleTerm', args = { num, "size=6" } }
 				end,
-				mode = { 'n', 'v', 'i', 't' }
+				mode = { 'n', 'v', 'i' }
 			},
 			{ "<leader>te", function() vim.cmd("TermSelect") end, mode = "n" },
 		},

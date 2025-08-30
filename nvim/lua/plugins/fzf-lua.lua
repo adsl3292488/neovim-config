@@ -25,7 +25,7 @@ return {
 			{
 				"<leader>p",
 				function()
-					vim.ui.input({ prompt = "search path", completion ='dir_in_path'}, function(input)
+					vim.ui.input({ prompt = "search path", completion = 'dir_in_path' }, function(input)
 						if input then
 							require("fzf-lua").files({ cwd = input })
 						end

@@ -29,7 +29,7 @@ return {
 			repl_disable = {},
 			interpreter_options = {
 				C_original = {
-					compiler = "clang"
+					compiler = "gcc"
 				}
 			},
 			display = {
@@ -46,9 +46,9 @@ return {
 			},
 		},
 		keys = {
-			{ "<F9>",  "<cmd>SnipRun<CR>",                       mode = "n", silent = true },
-			{ "<F9>",  ":'<,'>SnipRun<CR>",                      mode = "v", silent = true },
-			{ "<F10>", "<cmd>lua require'sniprun'.run('n')<CR>", mode = "n", silent = true },
+			{ "<leader>rr", "<cmd>SnipRun<CR>",                       mode = "n", silent = true },
+			{ "<leader>rr", ":'<,'>SnipRun<CR>",                      mode = "v", silent = true },
+			{ "<F9>",       "<cmd>lua require'sniprun'.run('n')<CR>", mode = "n", silent = true },
 		}
 	}
 	---- ui for cmdline ----

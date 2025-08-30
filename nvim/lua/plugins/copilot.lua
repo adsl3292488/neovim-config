@@ -58,18 +58,64 @@ return {
 	{
 		"CopilotC-Nvim/CopilotChat.nvim",
 		-- build = "make tikotken",
-		opts = {
-			prompts = {
-				Explain = "Explain what the following code does in simple terms.",
-				Optimize = "Optimize the code to balance performance,readability and maintainability.",
-				Refactor = "Please refactor the following code to improve its clarity and readability.",
-				Review = "Please review the following code and provide suggestions for improvement.",
-				BetterNaming = "Please provide better names for the variables and functions in the following code.",
-				FixError = "Please expplain the error in the following code and provide a solution.",
-				Chinese = "Please reply in Chinese.",
-			}
+		opts = function()
+			local profile_cache_path = vim.fn.stdpath("cache") .. "/copilot_profile.json"
 
-		},
+			local function load_last_profile()
+				local file = io.open(profile_cache_path, "r")
+				if file then
+					local content = file:read("*a")
+					file:close()
+					local ok, data = pcall(vim.fn.json_decode, content)
+					if ok and data and data.profile then
+						return data.profile
+					end
+				end
+				return nil
+			end
+
+			local function save_profile(profile)
+				local file = io.open(profile_cache_path, 'w')
+				if file then
+					file:write(vim.fn.json_encode({ profile = profile }))
+					file:close()
+				end
+			end
+
+			vim.api.nvim_create_user_command("CopilotProfileReset", function()
+				os.remove(profile_cache_path)
+				vim.notify("Copilot profile reset!", vim.log.levels.INFO)
+			end, {})
+
+			local prompt_profiles = require("config.copilot_prompt")
+
+			vim.api.nvim_create_user_command("CopilotPrompts", function(opts)
+				local profile = opts.args
+				if prompt_profiles[profile] then
+					require("CopilotChat").setup({ prompts = prompt_profiles[profile] })
+					save_profile(profile)
+					vim.notify("Switched to profile '" .. profile .. "'!", vim.log.levels.INFO)
+				else
+					vim.notify("Profile '" .. profile .. "' not found!", vim.log.levels.ERROR)
+				end
+			end, {
+				nargs = 1,
+				complete = function()
+					return vim.tbl_keys(prompt_profiles)
+				end
+			})
+
+			local last_profile = load_last_profile()
+			if last_profile and prompt_profiles[last_profile] then
+				return {
+					prompts = prompt_profiles[last_profile]
+				}
+			else
+				return {
+					prompts = prompt_profiles.technical
+				}
+			end
+		end,
 		keys = {
 			{ "<F4>",       "<cmd> CopilotChatToggle<CR>",       mode = { "n", "v", "i" }, desc = "Toggle Copilot Chat" },
 			{ "<leader>ae", "<cmd> CopilotChatExplain<CR>",      mode = { "n", "v" },      desc = "CopilotChat explain code" },
