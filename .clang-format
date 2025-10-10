@@ -11,28 +11,31 @@ TabWidth: 4
 UseTab: Never
 
 # 每行最多 100 個字符
-ColumnLimit: 100
+ColumnLimit: 80
 
-# 函數定義後的左大括號位於同一行
-BreakBeforeBraces: Attach
-
+# 頂層函式和結構定義的大括號換行。
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterControlStatement: false # if/for/while/switch 後大括號換行
+  AfterFunction: true         # 函式定義後大括號換行
+  AfterStruct: true           # struct 定義後大括號換行
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false         # 大括號本身不額外縮排
 # 強制類成員變量按訪問修飾符分組
 SortIncludes: true
 
 # 強制在控制結構 (如 if, for, while) 的左括號前加一個空格
 SpaceBeforeParens: ControlStatements
 
-# 設置函數宣告和函數定義的返回類型與函數名之間的間距
-SpaceAfterLogicalNot: true
-
 # 控制多行注釋的格式
 CommentPragmas: '^ IWYU pragma:'
 
 # 允許函數參數列表中多行對齊
-AlignAfterOpenBracket: AlwaysBreak
+AlignAfterOpenBracket: Align #AlwaysBreak
 
 # 強制指針和引用符號與變量名對齊
-PointerAlignment: Right
+PointerAlignment: Left
 
 # 在逗號後強制添加空格
 SpacesInAngles: false
@@ -40,5 +43,9 @@ SpacesInAngles: false
 # 強制為運算符兩邊添加空格
 SpacesInContainerLiterals: true
 
-# 使用 C++11 列表初始化格式
-# Cpp11BracedListStyle: true
+AllowShortFunctionsOnASingleLine: InlineOnly
+
+ReflowComments: true
+
+IncludeBlocks: Regroup
+
