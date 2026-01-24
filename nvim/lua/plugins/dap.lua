@@ -2,7 +2,6 @@ return {
 	{
 		"mfussenegger/nvim-dap",
 		config = function()
-			-- 基本鍵位設置
 			local dap = require("dap")
 			vim.keymap.set('n', '<F5>', dap.continue)
 			vim.keymap.set('n', '<F10>', dap.step_over)
