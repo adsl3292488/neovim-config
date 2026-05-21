@@ -27,7 +27,7 @@ check_ver() {
 				clang-tidy clang-format universal-ctags bear libtool-bin automake
 				autoconf bison gperf flex texinfo libncurses5 libncurses5-dev
 				libpsl-dev ninja-build gettext unzip pkg-config rename
-				software-properties-common xclip lua5.4 luarocks snapd rust-1.76-all)
+				software-properties-common xclip lua5.4 luarocks snapd rust-1.89-all)
 			;;
 		"24.04")
 			nodejs_ver=24.x
@@ -36,16 +36,16 @@ check_ver() {
 				clang-tidy clang-format universal-ctags bear libtool-bin automake
 				autoconf bison gperf flex texinfo libncurses5 libncurses5-dev
 				libpsl-dev ninja-build gettext unzip pkg-config rename
-				software-properties-common xclip lua5.4 luarocks snapd rust-1.76-all)
+				software-properties-common xclip lua5.4 luarocks snapd rust-1.89-all)
 			;;
 		*)
-			nodejs_ver=20.x
+			nodejs_ver=22.x
 			apt_packages=(gcc g++ curl wget git ripgrep build-essential make cmake
 				python3.8 libpython3-dev python3-distutils python3-pip clang clang-tidy
 				clang-format universal-ctags bear libtool-bin automake autoconf bison
 				gperf flex texinfo libncurses5 libncurses5-dev libpsl-dev ninja-build
 				gettext unzip pkg-config rename software-properties-common xclip lua5.3
-				luarocks snapd rust-1.62-all)
+				luarocks snapd rust-1.84-all)
 			;;
 		esac
 	elif [ "$PLATFORM" == "debian" ]; then
@@ -55,7 +55,7 @@ check_ver() {
 			clang-tidy clang-format universal-ctags bear libtool-bin automake
 			autoconf bison gperf flex texinfo libncurses5 libncurses5-dev
 			libpsl-dev ninja-build gettext unzip pkg-config rename
-			software-properties-common xclip lua5.4 luarocks snapd rust-1.76-all)
+			software-properties-common xclip lua5.4 luarocks snapd rust-1.84-all)
 
 	fi
 
@@ -90,7 +90,7 @@ check_pwd() {
 
 download_package() {
 	if [[ ! -d "${PACKAGE_DIR}" ]]; then
-		mkdir -p $PACKAGE_DIR
+		mkdir -p "$PACKAGE_DIR"
 	fi
 
 	$SUDO_CMD apt-get update
@@ -105,8 +105,8 @@ download_package() {
 			echo -e "\033[32m apt install $pkg \033[0m"
 			if $SUDO_CMD apt-get install -y "$pkg"; then
 				break
-			elif [ "$1" -eq 3 ]; then
-				ecoh "Failed to install "$pkg" after 3 attempts."
+			elif [ "$i" -eq 3 ]; then
+				echo "Failed to install $pkg after 3 attempts."
 			else
 				echo "Retrying to install $pkg ($i/3)..."
 				sleep 2
