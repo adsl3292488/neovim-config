@@ -1,23 +1,12 @@
 return {
-	{ "williamboman/mason.nvim", config = true },
+	{ "mason-org/mason.nvim", config = true },
 	{
-		"williamboman/mason-lspconfig.nvim",
+		"mason-org/mason-lspconfig.nvim",
 		dependencies = {
 			{ "neovim/nvim-lspconfig" },
 		},
 		opts = function()
-			local capabilities = vim.lsp.protocol.make_client_capabilities()
-			local augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
-
-			capabilities = vim.tbl_deep_extend(
-				"force",
-				capabilities,
-				require("blink.cmp").get_lsp_capabilities(
-					{ textDocumet = { completion = { completionItem = { snippetSupport = false } } } },
-					false
-				)
-			)
-
+			local capabilities = require("blink.cmp").get_lsp_capabilities()
 			vim.lsp.config("*", {
 				root_markers = { ".git", ".root" },
 				capabilities = capabilities,
@@ -48,22 +37,6 @@ return {
 				filetypes = { "c", "cpp" },
 			})
 
-			vim.g.AutoFormatFlag = true
-			vim.api.nvim_create_user_command("SetAutoFormatEnable", function(opts)
-				if opts.args == "true" then
-					vim.g.AutoFormatFlag = true
-				elseif opts.args == "false" then
-					vim.g.AutoFormatFlag = false
-				else
-					print("Invalid argument, use true or false")
-				end
-			end, {
-				nargs = "?",
-				complete = function()
-					return { "true", "false" }
-				end,
-			})
-
 			return {
 				ensure_installed = {
 					"clangd",
@@ -80,55 +53,35 @@ return {
 		"saghen/blink.cmp",
 		dependencies = {
 			{ "rafamadriz/friendly-snippets" },
-			{ "L3MON4D3/LuaSnip", version = "v2.*", build = "make install_jsregexp" },
 			{
-				"stevearc/conform.nvim",
-				event = "BufWritePre",
-				opts = {
-					formatters_by_ft = {
-						cpp = { "clang_format" },
-						c = { "clang_format" },
-						python = { "black" },
-						lua = { "stylua" },
-						sh = { "shfmt" },
-						markdown = { "prettierd" },
-						makefile = { "bake" },
-					},
-					format_on_save = function(bufnr)
-						if vim.g.AutoFormatFlag == true then
-							return { timeout_ms = 500, bufnr = bufnr, lsp_format = "fallback" }
-						end
-						return
-					end,
-				},
-				keys = {
-					{
-						"gq",
-						function()
-							require("conform").format({ async = true }, function(err)
-								if not err then
-									local mode = vim.api.nvim_get_mode().mode
-									if vim.startswith(string.lower(mode), "v") then
-										vim.api.nvim_feedkeys(
-											vim.api.nvim_replace_termcodes("<Esc>", true, false, true),
-											"n",
-											true
-										)
-									end
-								end
-							end)
-						end,
-						mode = { "n", "v" },
-						desc = "Format file",
-					},
-				},
+				"L3MON4D3/LuaSnip",
+				version = "v2.*",
+				build = "make install_jsregexp",
+				config = function()
+					require("luasnip.loaders.from_vscode").lazy_load()
+				end,
 			},
+			{ "Kaiser-Yang/blink-cmp-avante" },
 			-- 'mikavilpas/blink-ripgrep.nvim'
 		},
 		version = "1.*",
 		opts = {
 			sources = {
+				default = {
+					'avante',
+					'lsp',
+					'path',
+					'snippets',
+					'buffer'
+				},
 				providers = {
+					avante = {
+						module = 'blink-cmp-avante',
+						name = 'Avante',
+						opts = {
+							-- options for blink-cmp-avante
+						}
+					},
 					buffer = {
 						min_keyword_length = 3,
 					},
@@ -155,18 +108,7 @@ return {
 			-- 	},
 			-- }
 			snippets = {
-				expand = function(snippet)
-					require("luasnip").lsp_expand(snippet)
-				end,
-				active = function(filter)
-					if filter and filter.direction then
-						return require("luasnip").jumpable(filter.direction)
-					end
-					return require("luasnip").in_snippet()
-				end,
-				jump = function(direction)
-					require("luasnip").jump(direction)
-				end,
+				preset = 'luasnip',
 			},
 			keymap = {
 				preset = "enter",
@@ -207,8 +149,8 @@ return {
 					border = "rounded",
 					draw = {
 						columns = {
-							{ "label", "label_description", gap = 1 },
-							{ "kind_icon", gap = 1, "kind" },
+							{ "label",     "label_description", gap = 1 },
+							{ "kind_icon", gap = 1,             "kind" },
 						},
 						treesitter = { "lsp" },
 					},
@@ -227,9 +169,6 @@ return {
 				max_typos = function(keyword)
 					return math.floor(#keyword / 4)
 				end,
-				frecency = {
-					enabled = false,
-				},
 				use_proximity = false,
 				sorts = {
 					"exact",
@@ -260,6 +199,65 @@ return {
 				keymap = {
 					preset = "cmdline",
 				},
+			},
+		},
+	},
+	{
+		"stevearc/conform.nvim",
+		event = "BufWritePre",
+		config = function(_, opts)
+			vim.g.AutoFormatFlag = true
+			vim.api.nvim_create_user_command("SetAutoFormatEnable", function(args)
+				if args.args == "true" then
+					vim.g.AutoFormatFlag = true
+				elseif args.args == "false" then
+					vim.g.AutoFormatFlag = false
+				else
+					print("Invalid argument, use true or false")
+				end
+			end, {
+				nargs = "?",
+				complete = function()
+					return { "true", "false" }
+				end,
+			})
+			require("conform").setup(opts)
+		end,
+		opts = {
+			formatters_by_ft = {
+				cpp = { "clang_format" },
+				c = { "clang_format" },
+				python = { "black" },
+				lua = { "stylua" },
+				sh = { "shfmt" },
+				markdown = { "prettierd" },
+				makefile = { "bake" },
+			},
+			format_on_save = function(bufnr)
+				if vim.g.AutoFormatFlag == true then
+					return { timeout_ms = 500, bufnr = bufnr, lsp_format = "fallback" }
+				end
+			end,
+		},
+		keys = {
+			{
+				"gq",
+				function()
+					require("conform").format({ async = true }, function(err)
+						if not err then
+							local mode = vim.api.nvim_get_mode().mode
+							if vim.startswith(string.lower(mode), "v") then
+								vim.api.nvim_feedkeys(
+									vim.api.nvim_replace_termcodes("<Esc>", true, false, true),
+									"n",
+									true
+								)
+							end
+						end
+					end)
+				end,
+				mode = { "n", "v" },
+				desc = "Format file",
 			},
 		},
 	},

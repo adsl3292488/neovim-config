@@ -1,7 +1,7 @@
 local prompt_profiles = {
 	technical = {
 		Explain =
-		"Provide a clear, technically accurate explanation of what the following code does. Focus on its logic, functionality, and main purpose. Avoid discussing underlying technical concepts unless directly relevant to explaining the code’s behavior.",
+		"Provide a clear, technically accurate explanation of what the following code does. Structure your response as: (1) overall purpose, (2) logic flow, (3) key implementation details. Avoid discussing underlying technical concepts unless directly relevant to explaining the code's behavior.",
 		ExplainConcepts =
 		"Explain the technical concepts, architectural patterns, and language-specific behaviors demonstrated in the following code. Analyze performance implications and discuss why these concepts are relevant to the code’s structure and operation. Do not simply restate what the code does.",
 		Optimize =
@@ -15,7 +15,7 @@ local prompt_profiles = {
 		FixError =
 		"Identify and explain all errors, bugs, or potential issues in the following code. For each problem, provide a technically sound solution and explain the reasoning behind your fix.",
 		Document =
-		"Generate concise and informative documentation for the following code, including function/class descriptions, parameters, return values, side effects, and usage notes. Ensure all public APIs are documented.",
+		"Generate concise and informative documentation for the following code, including function/class descriptions, parameters, return values, side effects, and usage notes. Use the appropriate documentation style for the language (e.g., Doxygen for C/C++, docstrings for Python, LDoc for Lua). Ensure all public APIs are documented.",
 		TestCases =
 		"Write comprehensive test cases for the following code, covering normal operation, edge cases, invalid inputs, and potential failure scenarios. For each test case, briefly explain what it validates.",
 		SecurityAudit =
@@ -83,6 +83,8 @@ local prompt_profiles = {
 		"Identify any errors in the code and explain them clearly in an encouraging way. Provide a corrected version and help the reader understand the reasoning behind the fix.",
 		Document =
 		"Generate clear, beginner-friendly documentation for the following code. Include function descriptions, parameter explanations, return values, usage notes, and note any side effects or exceptions. Use the appropriate documentation style for the language (e.g., Python docstrings, Lua comments, C header-style documentation).",
+		TestCases =
+		"Write clear and simple test cases for the following code. For each test case, explain in plain language what it checks and why it matters. Cover at least: a normal input, an edge case, and an invalid input.",
 		SecurityAudit =
 		"Review the following code for potential security issues in a beginner-friendly way. Clearly explain what each vulnerability means, why it matters, and how to fix it. Avoid jargon, or explain any technical terms you use.",
 		DebugStrategy =

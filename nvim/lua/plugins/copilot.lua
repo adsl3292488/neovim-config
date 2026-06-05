@@ -1,9 +1,6 @@
 return {
 	{
 		"zbirenbaum/copilot.lua",
-		dependencies = {
-			{ "nvim-lua/plenary.nvim", branch = "master" },
-		},
 		config = true,
 		lazy = false,
 		opts = {
@@ -15,11 +12,11 @@ return {
 					jump_next = "]]",
 					accept = "<CR>",
 					refresh = "gr",
-					open = "<M-CR>"
+					open = "<M-CR>",
 				},
 				layout = {
 					position = "bottom", -- | top | left | right | horizontal | vertical
-					ratio = 0.4
+					ratio = 0.4,
 				},
 			},
 			suggestion = {
@@ -48,16 +45,19 @@ return {
 				lua = true,
 				["."] = false,
 			},
-			copilot_node_command = 'node', -- Node.js version must be > 18.x
+			copilot_node_command = 'node', -- Node.js version must be > 22.x
 			server_opts_overrides = {},
 		},
 		keys = {
-			{ "<leader>cc", "<cmd>Copilot panel<CR>", mode = "n" }
+			{ "<leader>cc", "<cmd>Copilot panel<CR>", mode = "n" },
 		},
 	},
 	{
 		"CopilotC-Nvim/CopilotChat.nvim",
-		-- build = "make tikotken",
+		dependencies = {
+			{ "nvim-lua/plenary.nvim", branch = "master" },
+		},
+		build = "make tiktoken",
 		opts = function()
 			local profile_cache_path = vim.fn.stdpath("cache") .. "/copilot_profile.json"
 
@@ -118,16 +118,70 @@ return {
 		end,
 		keys = {
 			{ "<F4>",       "<cmd> CopilotChatToggle<CR>",       mode = { "n", "v", "i" }, desc = "Toggle Copilot Chat" },
-			{ "<leader>ae", "<cmd> CopilotChatExplain<CR>",      mode = { "n", "v" },      desc = "CopilotChat explain code" },
-			{ "<leader>ar", "<cmd> CopilotChatRefactor<CR>",     mode = { "n", "v" },      desc = "CopilotChat refactor code" },
-			{ "<leader>av", "<cmd> CopilotChatReview<CR>",       mode = { "n", "v" },      desc = "CopilotChat review code" },
-			{ "<leader>ao", "<cmd> CopilotChatOptimize<CR>",     mode = { "n", "v" },      desc = "Copilot Chat optimize code" },
-			{ "<leader>an", "<cmd> CopilotChatBetterNaming<CR>", mode = { "n", "v" },      desc = "CopilotChat better naming" },
-			{ "<leader>af", "<cmd> CopilotChatFixError<CR>",     mode = { "n", "v" },      desc = "CopilotChat fix error" },
-			{ "<leader>at", "<cmd> CopilotChatTests<CR>",        mode = { "n", "v" },      desc = "CopilotChat tests" },
-			{ "<leader>as", "<cmd> CopilotChatStop<CR>",         mode = { "n" },           desc = "CopilotChat stop" },
-			{ "<leader>al", "<cmd> CopilotChatLoad<CR>",         mode = { "n" },           desc = "CopilotChat load" },
-			{ "<leader>ap", "<cmd> CopilotChatSave<CR>",         mode = { "n" },           desc = "CopilotChat save" },
+			{ "<leader>ce", "<cmd> CopilotChatExplain<CR>",      mode = { "n", "v" },      desc = "CopilotChat explain code" },
+			{ "<leader>cr", "<cmd> CopilotChatRefactor<CR>",     mode = { "n", "v" },      desc = "CopilotChat refactor code" },
+			{ "<leader>cv", "<cmd> CopilotChatReview<CR>",       mode = { "n", "v" },      desc = "CopilotChat review code" },
+			{ "<leader>co", "<cmd> CopilotChatOptimize<CR>",     mode = { "n", "v" },      desc = "Copilot Chat optimize code" },
+			{ "<leader>cn", "<cmd> CopilotChatBetterNaming<CR>", mode = { "n", "v" },      desc = "CopilotChat better naming" },
+			{ "<leader>cf", "<cmd> CopilotChatFixError<CR>",     mode = { "n", "v" },      desc = "CopilotChat fix error" },
+			{ "<leader>ct", "<cmd> CopilotChatTests<CR>",        mode = { "n", "v" },      desc = "CopilotChat tests" },
+			{ "<leader>cs", "<cmd> CopilotChatStop<CR>",         mode = { "n" },           desc = "CopilotChat stop" },
+			{ "<leader>cl", "<cmd> CopilotChatLoad<CR>",         mode = { "n" },           desc = "CopilotChat load" },
+			{ "<leader>cp", "<cmd> CopilotChatSave<CR>",         mode = { "n" },           desc = "CopilotChat save" },
 		}
-	}
+	},
+	{
+		"yetone/avante.nvim",
+		build = vim.fn.has("win32") ~= 0 and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" or
+			"make",
+		event = "VeryLazy",
+		version = false,
+		---@module 'avante'
+		---@type avante.Config
+		opts = {
+			provider = "copilot",
+			selector = {
+				--- @alias avante.SelectorProvider "native" | "fzf_lua" | "mini_pick" | "snacks" | "telescope" | fun(selector: avante.ui.Selector): nil
+				provider = "fzf_lua",
+				provider_opts = {
+				},
+			},
+			mode = "agentic", --- legacy or agentic
+			behaviour = {
+				auto_apply_diff_after_generation = false,
+				auto_approve_tool_permissions = false,
+				auto_set_keymaps = true,
+			},
+			mappings = {
+				toggle = {
+					default = "<F3>",
+				}
+			},
+		},
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+			{
+				"HakonHarnes/img-clip.nvim",
+				event = "VeryLazy",
+				opts = {
+					default = {
+						embed_image_as_base64 = false,
+						prompt_for_file_name = false,
+						drag_and_drop = {
+							insert_mode = true,
+						},
+						-- Windows users must needed.
+						use_absolute_path = true,
+					},
+				},
+			},
+			{
+				'MeanderingProgrammer/render-markdown.nvim',
+				opts = {
+					file_types = { "markdown", "Avante" },
+				},
+				ft = { "markdown", "Avante" },
+			}
+		}
+	},
 }
