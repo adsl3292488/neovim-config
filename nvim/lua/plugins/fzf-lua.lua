@@ -15,7 +15,13 @@ return {
 			files = {
 				git_icons = false,
 				no_ignore = true,
-				formatter = "path.filename_first"
+				formatter = "path.filename_first",
+				-- 	fd_opts =
+				-- 	[[--color=never --hidden --type f --type l --exclude .git --exclude build-qti-distro-fullstack-perf]]
+			},
+			grep = {
+				-- rg_opts =
+				-- "--column --line-number --no-heading --no-ignore --color=always --smart-case --max-columns=4096 --iglob '!apps_proc/build-qti-distro-fullstack-perf/**' "
 			},
 		},
 		keys = {
