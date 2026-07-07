@@ -22,7 +22,14 @@ return {
 			}
 		},
 		event = { 'BufWritePost' },
-		config = function()
+		config = function(_, opts)
+			local lint = require("lint")
+			lint.linters_by_ft = opts.linters_by_ft
+			for name, cfg in pairs(opts.linters or {}) do
+				if lint.linters[name] then
+					lint.linters[name].args = cfg.args
+				end
+			end
 			vim.diagnostic.config({
 				-- virtual_text = false,
 				-- virtual_lines = {
@@ -51,7 +58,7 @@ return {
 			end,
 			})
 			vim.api.nvim_create_autocmd("BufWritePost", {
-				buffer = 0,
+				pattern = "*",
 				callback = function()
 					require("lint").try_lint()
 				end,

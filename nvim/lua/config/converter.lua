@@ -5,6 +5,9 @@ local function close_float()
 	if float_win and vim.api.nvim_win_is_valid(float_win) then
 		vim.api.nvim_win_close(float_win, true)
 	end
+	if float_buf and vim.api.nvim_buf_is_valid(float_buf) then
+		vim.api.nvim_buf_delete(float_buf, { force = true })
+	end
 	float_win = nil
 	float_buf = nil
 end
