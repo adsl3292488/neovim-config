@@ -26,7 +26,7 @@ check_ver() {
 				cmake python3.10 libpython3-dev python3-distutils python3-pip clang
 				clang-tidy clang-format universal-ctags bear libtool-bin automake
 				autoconf bison gperf flex texinfo libncurses5 libncurses5-dev
-				libpsl-dev ninja-build gettext unzip pkg-config rename
+				libpsl-dev ninja-build gettext unzip pkg-config rename fzf
 				software-properties-common xclip lua5.4 luarocks snapd rust-1.89-all)
 			;;
 		"24.04")
@@ -35,7 +35,7 @@ check_ver() {
 				cmake python3.10 libpython3-dev python3-distutils python3-pip clang
 				clang-tidy clang-format universal-ctags bear libtool-bin automake
 				autoconf bison gperf flex texinfo libncurses5 libncurses5-dev
-				libpsl-dev ninja-build gettext unzip pkg-config rename
+				libpsl-dev ninja-build gettext unzip pkg-config rename fzf
 				software-properties-common xclip lua5.4 luarocks snapd rust-1.89-all)
 			;;
 		*)
@@ -43,7 +43,7 @@ check_ver() {
 			apt_packages=(gcc g++ curl wget git ripgrep build-essential make cmake
 				python3.8 libpython3-dev python3-distutils python3-pip clang clang-tidy
 				clang-format universal-ctags bear libtool-bin automake autoconf bison
-				gperf flex texinfo libncurses5 libncurses5-dev libpsl-dev ninja-build
+				gperf flex texinfo libncurses5 libncurses5-dev libpsl-dev ninja-build fzf
 				gettext unzip pkg-config rename software-properties-common xclip lua5.3
 				luarocks snapd rust-1.84-all)
 			;;
@@ -176,8 +176,17 @@ install_lazygit() {
 install_fd() {
 	echo "------Install fd------"
 	FD_VERSION=$(curl -s "https://api.github.com/repos/sharkdp/fd/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
-	wget -P ./$PACKAGE_DIR https://github.com/sharkdp/fd/releases/download/v"${FD_VERSION}"/fd_"${FD_VERSION}"_amd64.deb
-	$SUDO_CMD dpkg -i "$PACKAGE_DIR/fd_${FD_VERSION}_amd64.deb"
+	OS_VERSION=$(uname -m)
+	if [[ "$OS_VERSION" == "x86_64" ]]; then
+		wget -P ./$PACKAGE_DIR https://github.com/sharkdp/fd/releases/download/v"${FD_VERSION}"/fd_"${FD_VERSION}"_amd64.deb
+		$SUDO_CMD dpkg -i "$PACKAGE_DIR/fd_${FD_VERSION}_amd64.deb"
+	elif [[ "$OS_VERSION" == "aarch64" ]]; then
+		wget -P ./$PACKAGE_DIR https://github.com/sharkdp/fd/releases/download/v"${FD_VERSION}"/fd_"${FD_VERSION}"_arm64.deb
+		$SUDO_CMD dpkg -i "$PACKAGE_DIR/fd_${FD_VERSION}_arm64.deb"
+	else
+		echo "Unsupported architecture: $OS_VERSION"
+		$SUDO_CMD apt install fd-find -y
+	fi
 }
 
 all() {
