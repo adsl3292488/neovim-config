@@ -126,8 +126,40 @@ return {
 			{ "<leader>cf", "<cmd> CopilotChatFixError<CR>",     mode = { "n", "v" },      desc = "CopilotChat fix error" },
 			{ "<leader>ct", "<cmd> CopilotChatTests<CR>",        mode = { "n", "v" },      desc = "CopilotChat tests" },
 			{ "<leader>cs", "<cmd> CopilotChatStop<CR>",         mode = { "n" },           desc = "CopilotChat stop" },
-			{ "<leader>cl", "<cmd> CopilotChatLoad<CR>",         mode = { "n" },           desc = "CopilotChat load" },
-			{ "<leader>cp", "<cmd> CopilotChatSave<CR>",         mode = { "n" },           desc = "CopilotChat save" },
+			{
+				"<leader>cl",
+				function()
+					local history_path = vim.fn.stdpath("data") .. "/copilotchat_history"
+					local files = vim.fn.glob(history_path .. "/*", false, true)
+					if #files == 0 then
+						vim.notify("No saved CopilotChat sessions found", vim.log.levels.WARN)
+						return
+					end
+					local names = {}
+					for _, f in ipairs(files) do
+						table.insert(names, vim.fn.fnamemodify(f, ":t:r"))
+					end
+					vim.ui.select(names, { prompt = "Select CopilotChat session to load:" }, function(choice)
+						if choice then
+							vim.cmd("CopilotChatLoad " .. choice)
+						end
+					end)
+				end,
+				mode = { "n" },
+				desc = "CopilotChat load",
+			},
+			{
+				"<leader>cp",
+				function()
+					vim.ui.input({ prompt = "Save chat as: " }, function(name)
+						if name and name ~= "" then
+							vim.cmd("CopilotChatSave " .. name)
+						end
+					end)
+				end,
+				mode = { "n" },
+				desc = "CopilotChat save"
+			},
 		}
 	},
 	{
@@ -181,7 +213,12 @@ return {
 					file_types = { "markdown", "Avante" },
 				},
 				ft = { "markdown", "Avante" },
-			}
+			},
+			{
+				"ColinKennedy/mega.cmdparse",
+				dependencies = {
+					"ColinKennedy/mega.logging" }
+			},
 		}
 	},
 }
